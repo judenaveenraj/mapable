@@ -5,29 +5,36 @@ var MapableRoute= (function(map, origin, destination, options){
         origin:  origin? origin: undefined,
         destination:destination? destination: undefined,
         _map: map? map : undefined,
-        _route: data? data : undefined,
+        _route: undefined,
         _options: options? options :    undefined,
         
         getRoutes: function(){
-            gmap.getRoutes({
+            var self = this;
+            Mapable.getMap().getRoutes({
                 travelMode: "driving",
                 origin : this.origin,
                 destination : this.destination,
-                callback: this.setPrimaryRoute
+                callback: function(results){
+                    self.setPrimaryRoute.bind(self, results)()
+                }
+                
             }); 
         },
         
         setPrimaryRoute: function(results){
+            var self = this;
+            console.log("asdasd")
             if(results.length > 0){
                 this._route = new GMaps.Route({
-                              map: this._map,
+                              map: self._map,
                               route: results[0],
                               strokeColor: this._options? this._options.strokeColor : "#336699",
                               strokeOpacity: this._options? this._options.strokeOpacity : 0.5,
                               strokeWeight: this._options? this._options.strokeWeight : 10
                             });
-                console.log(this._route)
-                for (var step in groute.steps){ groute.forward() };
+                if(this._route != undefined)
+                    console.log("Loaded Route onto Map")
+                for (var step in this._route.steps){ this._route.forward() };
             }
         }
     };
@@ -39,7 +46,13 @@ var MapableRoute= (function(map, origin, destination, options){
     };
     
     var view = {
-        container: $("planner")
+        container: $("planner"),
+        init: function(){
+            this.container.addClass("planner");
+        },
+        show: function(){
+            this.container.addClass("active");
+        }
     
     }
     
@@ -49,12 +62,14 @@ var MapableRoute= (function(map, origin, destination, options){
     
     return {
         init: function(){
+            view.init();
             bindEvents();
         },
         
-        getRoute: function(){
-            this.controller.getRoutes();
-        }
+        loadRoute: function(){
+            controller.getRoutes();
+        },
+        getRoute: function(){return model;}
             
     
     } 

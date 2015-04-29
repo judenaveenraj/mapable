@@ -5,23 +5,28 @@ var Mapable = {
     _origin_loc: undefined,
     _destination_loc: undefined,
     _map: undefined,
+    route: undefined,
     
     init: function(origin, destination){
         this._origin = origin;
         this._destination = destination;
-        this.getOriginGeo().then(this.getDestGeo()).then(this.createAndCenterMapOnOrigin())
+        this.getOriginGeo().then(this.getDestGeo.bind(this)).then(this.createAndCenterMapOnOrigin.bind(this)).then(this.loadRoute.bind(this));
         
+    },
+    
+    
+    getMap: function(){
+        return this._map;
     },
     
     createAndCenterMapOnOrigin: function(){
         
                 q=Q.defer();
-                console.log(this)
-//                this._map = new GMaps({
-//                  div: '#map',
-//                  lat: this._origin_loc.lat,
-//                  lng: this._origin_loc.lng,
-//                });
+                this._map = new GMaps({
+                  div: '#map',
+                  lat: this._origin_loc.lat,
+                  lng: this._origin_loc.lng,
+                });
                 q.resolve();
                 
     },
@@ -68,6 +73,12 @@ var Mapable = {
                 });
                 return q.promise;
     },
+    
+    loadRoute: function(){
+        console.log(this)
+                this.route = MapableRoute(this._map, this._origin, this._destination);
+                
+    }
         
     
 
