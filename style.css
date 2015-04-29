@@ -2,7 +2,29 @@
 #map {
     width: 600px;
     height: 600px;
-    position: relative;
+    position: absolute;
     left: 50%;
     margin-left: -300px;
+    margin-top: 50px;
+    z-index: 9999;
 }
+
+
+#container{
+    position: relative;
+    width:1200px;
+    min-height: 700px;
+    left: 50%;
+    margin-left: -600px;
+}
+
+.planner{
+    background-color: #eee;
+
+}
+
+.planner.active{
+    background-color: #ddd;
+}
+
+

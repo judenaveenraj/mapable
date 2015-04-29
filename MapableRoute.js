@@ -4,6 +4,7 @@ var MapableRoute= (function(map, origin, destination, options){
         
         origin:  origin? origin: undefined,
         destination:destination? destination: undefined,
+        steps: [],
         _map: map? map : undefined,
         _route: undefined,
         _options: options? options :    undefined,
@@ -23,7 +24,7 @@ var MapableRoute= (function(map, origin, destination, options){
         
         setPrimaryRoute: function(results){
             var self = this;
-            console.log("asdasd")
+            console.log(results[0]);
             if(results.length > 0){
                 this._route = new GMaps.Route({
                               map: self._map,
@@ -34,8 +35,17 @@ var MapableRoute= (function(map, origin, destination, options){
                             });
                 if(this._route != undefined)
                     console.log("Loaded Route onto Map")
-                for (var step in this._route.steps){ this._route.forward() };
+                console.log(this._route);
+                for (var step in this._route.steps){ 
+                    this.addStep(this._route.steps[step]);
+                    this._route.forward();
+                };
             }
+        },
+        
+        addStep: function(){
+            step = MapableSteps([step]);
+            this.steps.push(step);
         }
     };
     
@@ -46,7 +56,7 @@ var MapableRoute= (function(map, origin, destination, options){
     };
     
     var view = {
-        container: $("planner"),
+        container: $("#container"),
         init: function(){
             this.container.addClass("planner");
         },
@@ -69,7 +79,12 @@ var MapableRoute= (function(map, origin, destination, options){
         loadRoute: function(){
             controller.getRoutes();
         },
-        getRoute: function(){return model;}
+        getModel: function(){
+            return model;
+        },
+        getView: function(){
+            return view;
+        }
             
     
     } 

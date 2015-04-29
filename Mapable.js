@@ -75,8 +75,10 @@ var Mapable = {
     },
     
     loadRoute: function(){
-        console.log(this)
-                this.route = MapableRoute(this._map, this._origin, this._destination);
+        
+        this.route = MapableRoute(this._map, this._origin, this._destination);
+        this.route.init();
+        this.route.loadRoute();
                 
     }
         
