@@ -10,7 +10,7 @@ var Mapable = {
     init: function(origin, destination){
         this._origin = origin;
         this._destination = destination;
-        this.getOriginGeo().then(this.getDestGeo.bind(this)).then(this.createAndCenterMapOnOrigin.bind(this)).then(this.loadRoute.bind(this));
+        this._getOriginGeoCode().then(this._getDestGeoCode.bind(this)).then(this._createAndCenterMapOnOrigin.bind(this)).then(this.loadRoute.bind(this));
         
     },
     
@@ -19,19 +19,10 @@ var Mapable = {
         return this._map;
     },
     
-    createAndCenterMapOnOrigin: function(){
-        
-                q=Q.defer();
-                this._map = new GMaps({
-                  div: '#map',
-                  lat: this._origin_loc.lat,
-                  lng: this._origin_loc.lng,
-                });
-                q.resolve();
-                
-    },
     
-    getOriginGeo: function(){
+    
+    // Private Functions 
+    _getOriginGeoCode: function(){
                 q = Q.defer();
                 var self = this;
                 GMaps.geocode({
@@ -39,8 +30,8 @@ var Mapable = {
                     "callback" : function(result, status){
                             if(status == "OK"){
                                 self._origin_loc={
-                                    lat: result[0].geometry.location.k,
-                                    lng: result[0].geometry.location.D
+                                    lat: result[0].geometry.location.A,
+                                    lng: result[0].geometry.location.F
                                 }
                                 q.resolve()
                             }
@@ -53,7 +44,7 @@ var Mapable = {
     },
         
         
-    getDestGeo: function(){
+    _getDestGeoCode: function(){
                 q = Q.defer();
                 var self = this;
                 GMaps.geocode({
@@ -62,8 +53,8 @@ var Mapable = {
                             
                             if(status == "OK"){
                                  self._destination_loc={
-                                    lat: result[0].geometry.location.k,
-                                    lng: result[0].geometry.location.D
+                                    lat: result[0].geometry.location.A,
+                                    lng: result[0].geometry.location.F
                                 }
                                 q.resolve()
                             }
@@ -74,11 +65,23 @@ var Mapable = {
                 return q.promise;
     },
     
+    _createAndCenterMapOnOrigin: function(){
+        
+                q=Q.defer();
+                this._map = new GMaps({
+                  div: '#map',
+                  lat: this._origin_loc.lat,
+                  lng: this._origin_loc.lng,
+                });
+                q.resolve();
+                
+    },
+    
     loadRoute: function(){
         
         this.route = MapableRoute(this._map, this._origin, this._destination);
         this.route.init();
-        this.route.loadRoute();
+        
                 
     }
         

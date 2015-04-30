@@ -10,7 +10,7 @@ var MapableRoute= (function(map, origin, destination, options){
         _route: undefined,
         _options: options? options :    undefined,
         
-        getRoutes: function(){
+        fetchPrimaryRoute: function(){
             var self = this;
             Mapable.getMap().getRoutes({
                 travelMode: "driving",
@@ -51,7 +51,7 @@ var MapableRoute= (function(map, origin, destination, options){
     
     var controller = {
         loadRoute: function(){
-            model.getRoutes();
+            model.fetchPrimaryRoute();
             // Now the route is loaded in this._route
             this.numSteps = this._route.step_count;
             for(var i in this._route.route.legs){
@@ -81,15 +81,16 @@ var MapableRoute= (function(map, origin, destination, options){
     
     return {
         init: function(){
+            
+            controller.loadRoute();
             view.init();
             bindEvents();
+            
         },
         
-        loadRoute: function(){
-            controller.loadRoute();
-        },
         model: model,
-        view: view
+        view: view,
+        controller: controller
         
             
     
