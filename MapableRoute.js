@@ -4,7 +4,8 @@ var MapableRoute= (function(map, origin, destination, options){
         
         origin:  origin? origin: undefined,
         destination:destination? destination: undefined,
-        steps: [],
+        legs: [],
+        numSteps: 0,
         _map: map? map : undefined,
         _route: undefined,
         _options: options? options :    undefined,
@@ -37,7 +38,6 @@ var MapableRoute= (function(map, origin, destination, options){
                     console.log("Loaded Route onto Map")
                 console.log(this._route);
                 for (var step in this._route.steps){ 
-                    this.addStep(this._route.steps[step]);
                     this._route.forward();
                 };
             }
@@ -50,8 +50,17 @@ var MapableRoute= (function(map, origin, destination, options){
     };
     
     var controller = {
-        getRoutes: function(){
+        loadRoute: function(){
             model.getRoutes();
+            // Now the route is loaded in this._route
+            this.numSteps = this._route.step_count;
+            for(var i in this._route.route.legs){
+                var leg = MapableLeg(this._route.route.legs[i]);
+                leg.init();
+                this.legs.push(leg);
+                console.log(leg)
+            }
+
         }
     };
     
@@ -77,14 +86,11 @@ var MapableRoute= (function(map, origin, destination, options){
         },
         
         loadRoute: function(){
-            controller.getRoutes();
+            controller.loadRoute();
         },
-        getModel: function(){
-            return model;
-        },
-        getView: function(){
-            return view;
-        }
+        model: model,
+        view: view
+        
             
     
     } 
